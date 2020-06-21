@@ -1,0 +1,14 @@
+nmap
+gobuster
+hydra
+binwalk
+phpLiteAdmin
+searchsploit
+LFI
+RCE
+port knock
+netstat
+LinEnum
+crontab
+pspy
+chkrootkit

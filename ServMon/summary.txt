@@ -1,0 +1,11 @@
+nmap
+FTP
+searchsploit (NVMS)
+directory traversal
+LFI
+hydra (SSH)
+searchsploit (NSClient++)
+SSH Port Forwarding
+/usr/share/windows-resources/binaries/nc.exe
+Microsoft Edge (is lub, firefox wasn't able to load NSClient++ website completely for some reason)
+netcat reverse shell

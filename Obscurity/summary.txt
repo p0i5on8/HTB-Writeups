@@ -1,0 +1,14 @@
+nmap
+ffuf
+python code audit (unnecessary use of eval)
+reverse shell payload in http request (using socket and subprocess)
+got www-data
+again python code audit (easy crypto)
+got robert's SSH password
+sudo -l
+/usr/bin/python3 /home/robert/BetterSSH/BetterSSH.py
+change directory name and create another directory with same name
+now run arbitrary python code using your own BetterSSH.py
+got root shell
+M2: for i in {1..100000}; do cp /tmp/SSH/* /tmp/flag; done 2>/dev/null
+M3: sudo -u robert -u root <cmd>

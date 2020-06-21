@@ -1,0 +1,23 @@
+nmap
+nostromo 1.9.6 (metasploit)
+.htpasswd + john (but not used later)
+config file ==> public_www (public directory in /home/david)
+ssh-identity-files.tgz (extract in tmp)
+john for passphrase of id_rsa (/usr/share/john/ssh2john.py and john)
+gtfobins (journalctl)
+window size (exploit for less and more) 
+!/bin/bash
+
+
+
+
+Traverxec is a Linux-based target machine, which opens the common 22 and 80 ports.  
+There is nothing to use for websites running on port 80,  
+but the middleware service nostromo 1.9.6 of the website has a directory to bypass and cause code execution.  
+After entering the target with www-data permissions, the /home/david directory was found to be unreachable.  
+However, looking at the nostromo documentation, I found that the configuration file has a HOMEDIRS option,  
+where the homedirs_public attribute specifies the home directory of the website,  
+and found that /home/david/pulic_www/ is reachable, which contains david's private key.  
+I checked Google and found a script in the /home/david/bin directory, and /usr/bin/journalctl was run as root.  
+Looking at GTFObins, I found that journalctl running through sudo can be used to escalate privileges.  
+Shrink the window and trigger the pager to gain root privileges.

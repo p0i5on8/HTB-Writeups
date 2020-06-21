@@ -1,0 +1,7 @@
+nmap
+gobuster
+hex to ascii
+base64
+heartbleed
+tmux socket
+dirtycow

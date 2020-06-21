@@ -1,0 +1,14 @@
+nmap
+dirbuster (/ona)
+OpenNetAdmin 18.1.1 - Command Injection Exploit (Metasploit)
+credentials in config file
+netstat -tulpn
+ssh2john.py
+john
+sudo -l
+nano (read files using ctrl+R)
+
+https://github.com/amriunix/ona-rce  <-- for manual OpenNetAdmin exploit
+```
+python3 ona-rce.py exploit http://10.10.10.171/ona
+```

@@ -1,0 +1,11 @@
+nmap
+commonName in nmap
+/etc/hosts to access subdomain
+MongoDB NoSQL injection
+PayloadAllTheThings
+Blind NoSQL injection
+mongo shell (optional)
+find SUID files (find / -perm -4000 2>/dev/null)
+jjs gtfobins
+ssh-keygen
+
