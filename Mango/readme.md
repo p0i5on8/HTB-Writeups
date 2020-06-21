@@ -1,6 +1,6 @@
 ![](images/boxInfo.png)
 
-## nmap
+## Nmap
 ```console
 root@kali:~# nmap -sC -sV 10.10.10.162
 Starting Nmap 7.80 ( https://nmap.org ) at 2020-03-17 19:19 EDT
@@ -32,6 +32,8 @@ Nmap done: 1 IP address (1 host up) scanned in 44.39 seconds
 ```
 http://10.10.10.162 is forbidden and   
 https://10.10.10.162 is mango search page with only analytics.php link which itself is just a show page and contains nothing useful  
+
+## /etc/hosts
 going through the nmap result we can see "commonName=staging-order.mango.htb"  
 commonName is generallly the domain name so we should visit this subdomain  
 but only way to visit it is adding it in the /etc/hosts file because there is no way to go to a subdomain using IP address
@@ -39,6 +41,7 @@ so lets change the /etc/hosts file and visit staging-order.mango.htb
 
 ![](images/etcHosts.png)
 
+## NoSQL Injection
 visiting staging-order.mango.htb we get a login page  
 the name of the box suggests that its using MongoDB so we can try some NoSQL injection on the login page  
 so we can fire up burp suite and try the most basic NoSQL injection from PayloadAllTheThings  
@@ -140,6 +143,7 @@ mango:h3mXK8RhU~f{]f5H
 
 ![](images/noSQLi.png)
 
+## SSH with creds
 lets try to ssh with the credentials found  
 i was not able to ssh as admin but mango credentials worked  
 but there was not user.txt in /home/mango  
@@ -207,6 +211,8 @@ then we can use mongodb shell to get the password for admin user
 
 ![](images/mongo.png)
 
+# PrivEsc
+## SUID
 now lets try to get root shell  
 i went through the files in /var/www/staging but there was nothing particularly interesting  
 so i searched for SUID binaries using find and found jjs which has a gtfobins page  
@@ -283,6 +289,7 @@ drwxr-xr-x 7 root root    4096 Sep 27 14:15 ..
 -rwxr-xr-x 1 root root  107408 Jul 18  2019 unpack200
 ```
 
+## gtfobins
 looking through the gtfobins page for jjs i figured we can directly read /root/root.txt  
 
 ![](images/gtfoFileRead.png)
@@ -308,6 +315,7 @@ jjs> $EXEC("cat /root/root.txt");
 jjs> 
 ```
 
+## Getting root shell via SSH keys
 we got root.txt but to get a root shell we have to do something more  
 we know we can write files as root so we can add our ssh keys and then ssh as root  
 for writing in a file we can either use commands given on gtfobins or directly use bash commands  
